@@ -1,0 +1,4 @@
+NEXT_PUBLIC_SITE_URL
+production
+https://lexai-roan.vercel.app
+N
