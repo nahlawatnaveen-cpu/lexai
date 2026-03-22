@@ -1,9 +1,9 @@
 import OpenAI from 'openai';
-import { OpenAIStream, StreamingTextResponse } from 'ai';
 import { createClient } from '@/lib/supabase/server';
 
 export const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
+  baseURL: 'https://api.deepseek.com',
 });
 
 const LEGAL_SYSTEM_PROMPT = `You are LexAI, an advanced AI legal assistant specialized in Indian law. Your expertise includes:
@@ -57,7 +57,7 @@ export async function createAIStream(
   }
 
   const stream = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: 'deepseek-chat',
     messages: [
       { role: 'system', content: LEGAL_SYSTEM_PROMPT },
       ...messages,
@@ -86,7 +86,7 @@ export async function generateResponse(
   userId: string
 ): Promise<string> {
   const completion = await openai.chat.completions.create({
-    model: 'gpt-4o',
+    model: 'deepseek-chat',
     messages: [
       { role: 'system', content: LEGAL_SYSTEM_PROMPT },
       ...messages,
