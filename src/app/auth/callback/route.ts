@@ -1,4 +1,6 @@
+import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { cookies } from 'next/headers';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -10,7 +12,7 @@ export async function GET(request: Request) {
     
     if (error) {
       console.error('Auth error:', error.message);
-      return Response.redirect(new URL('/login', request.url), 303);
+      return NextResponse.redirect(new URL('/login?error=auth_failed', request.url));
     }
     
     if (data.user) {
@@ -18,6 +20,5 @@ export async function GET(request: Request) {
     }
   }
 
-  const redirectUrl = new URL('/dashboard', request.url);
-  return Response.redirect(redirectUrl, 303);
+  return NextResponse.redirect(new URL('/dashboard', request.url));
 }
