@@ -3,17 +3,21 @@ import { createClient } from '@/lib/supabase/server';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
-  const next = searchParams.get('next') ?? '/dashboard';
-
-  console.log('Callback received - code:', !!code, 'next:', next);
 
   if (code) {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     
-    console.log('Session result:', { hasUser: !!data?.user, error: error?.message });
+    if (error) {
+      console.error('Auth error:', error.message);
+      return Response.redirect(new URL('/login', request.url), 303);
+    }
+    
+    if (data.user) {
+      console.log('User logged in:', data.user.email);
+    }
   }
 
-  console.log('Redirecting to:', next);
-  return Response.redirect(new URL(next, request.url), 303);
+  const redirectUrl = new URL('/dashboard', request.url);
+  return Response.redirect(redirectUrl, 303);
 }
